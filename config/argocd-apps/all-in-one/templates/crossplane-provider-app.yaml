@@ -22,6 +22,14 @@ spec:
   source:
     path: config/crossplane-provider
     repoURL: {{.Values.repoURL}}
+    helm:
+      parameters:
+      - name: spec.credentials.secretRef.namespace
+        value: crossplane-system
+      - name: spec.credentials.secretRef.name
+        value: k8s-kubeconfig
+      - name: spec.credentials.secretRef.key
+        value: credentials
     directory:
       jsonnet: {}
       recurse: true
