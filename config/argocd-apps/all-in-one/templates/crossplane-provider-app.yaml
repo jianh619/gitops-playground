@@ -25,7 +25,7 @@ spec:
     helm:
       parameters:
       - name: spec.credentials.secretRef.namespace
-        value: crossplane-system
+        value: test-system
       - name: spec.credentials.secretRef.name
         value: k8s-kubeconfig
       - name: spec.credentials.secretRef.key
