@@ -1,5 +1,5 @@
 ---
-repoURL: https://github.com/cloud-pak-gitops/instana-gitops
+repoURL: https://github.com/jianh619/gitops-playground
 metadata:
   argocd_app_namespace: openshift-gitops
   instana_namespace: instana-system
