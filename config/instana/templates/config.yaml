@@ -6,6 +6,6 @@ spec:
   credentials:
     source: Secret
     secretRef:
-      namespace: {{.Values.spec.instanaVersion}}
-      name: {{.Values.spec.nfsServerHost}}
+      namespace: crossplane-system
+      name: k8s-kubeconfig
       key: credentials
