@@ -20,8 +20,11 @@ spec:
       kind: Application
   project: default
   source:
-    repoURL: {{.Values.repoURL}}/config/crossplane-provider
-    chart: instana-provider
+    path: config/crossplane-provider
+    repoURL: {{.Values.repoURL}}
+    directory:
+      jsonnet: {}
+      recurse: true
   syncPolicy:
     automated:
       prune: true
