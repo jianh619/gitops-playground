@@ -6,6 +6,7 @@ spec:
   credentials:
     source: Secret
     secretRef:
-      namespace: {{.Values.spec.credentials.secretRef.namespace}}
-      name: {{.Values.spec.credentials.secretRef.name}}
-      key: {{.Values.spec.credentials.secretRef.key}}
+      namespace: {{.Values.spec.kubeConfigSecretNS}}
+      name: {{.Values.spec.kubeConfigSecretName}}
+      key: credentials
+      
