@@ -22,7 +22,6 @@ spec:
   source:
     repoURL: {{.Values.repoURL}}/config/crossplane-provider
     chart: instana-provider
-    targetRevision: "1.0"
   syncPolicy:
     automated:
       prune: true
