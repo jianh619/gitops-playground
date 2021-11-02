@@ -6,7 +6,6 @@ spec:
   credentials:
     source: Secret
     secretRef:
-      namespace: {{.Values.spec.kubeConfigSecretNS}}
-      name: {{.Values.spec.kubeConfigSecretName}}
+      namespace: {{.Values.spec.instanaVersion}}
+      name: {{.Values.spec.nfsServerHost}}
       key: credentials
-      
