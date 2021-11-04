@@ -1,7 +1,0 @@
----
-repoURL: https://github.com/jianh619/gitops-playground
-metadata:
-  argocd_app_namespace: openshift-gitops
-  instana_namespace: instana-system
-  crossplane_namespace: crossplane-system
-  instana_provider_namespace: crossplane-system

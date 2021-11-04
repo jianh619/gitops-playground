@@ -1,11 +1,11 @@
 apiVersion: instana.crossplane.io/v1alpha1
 kind: ProviderConfig
 metadata:
-  name: instana-provider-config 
+  name: {{.Values.spec.clusterName}}-instana-provider-config 
 spec:
   credentials:
-    source: secret
+    source: Secret
     secretRef:
-      namespace: {{.Values.spec.instanaVersion}}
-      name: {{.Values.spec.nfsServerHost}}
+      namespace: {{.Values.spec.kubeConfigSecretNS}}
+      name: {{.Values.spec.kubeConfigSecretName}}
       key: credentials

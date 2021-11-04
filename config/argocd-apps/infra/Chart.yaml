@@ -1,7 +1,7 @@
 ---
 apiVersion: v2
-name: instana-app
-description: Instana application
+name: infra-app
+description: Infra application
 
 # A chart can be either an 'application' or a 'library' chart.
 #
