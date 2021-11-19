@@ -1,0 +1,18 @@
+apiVersion: instana.io/v1alpha1
+kind: Unit
+metadata:
+  creationTimestamp: null
+  labels:
+    application: instana
+    group: operator
+  name: instana-prod
+  namespace: instana-units
+spec:
+  coreName: instana-core
+  coreNamespace: instana-core
+  initialAgentKey: qUMhYJxjSv6uZh2SyqTEnw
+  profile: small
+  tenantName: instana
+  unitName: prod
+status:
+  lastUpdate: null

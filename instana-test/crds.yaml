@@ -1,0 +1,627 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.2
+  creationTimestamp: null
+  name: cores.instana.io
+spec:
+  group: instana.io
+  names:
+    kind: Core
+    listKind: CoreList
+    plural: cores
+    singular: core
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.status
+      name: Status
+      type: string
+    - jsonPath: .status.version
+      name: Version
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Core is the Schema for the cores API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: CoreSpec for instana core installation
+            properties:
+              acceptorHostPort:
+                description: If specified, exposes the Acceptor on the host network
+                  with this port
+                format: int32
+                type: integer
+              baseDomain:
+                description: Base domain to use
+                type: string
+              clusterDomain:
+                default: cluster.local
+                description: Kubernetes cluster domain
+                type: string
+              databaseLocations:
+                description: All database locations
+                items:
+                  description: Location of an individual database service
+                  properties:
+                    clusterName:
+                      description: '[clickhouse] is used for db connection, will default
+                        to "local" if omitted. [elasticsearch] is used for db connection
+                        to "metadata" schema, will default to "onprem_onprem" if omitted'
+                      type: string
+                    clusterNodes:
+                      description: '[clickhouse] must be set if isCluster is used,
+                        to give a IP order for sharding'
+                      items:
+                        type: string
+                      type: array
+                    isCluster:
+                      description: '[clickhouse] can be set to identify if clusterNodes
+                        must be used'
+                      type: boolean
+                    namespace:
+                      description: Namespace where the service is located
+                      type: string
+                    schemas:
+                      description: Schemas being available with this service
+                      items:
+                        type: string
+                      minItems: 1
+                      type: array
+                    serviceName:
+                      description: ServiceName for the db service
+                      type: string
+                    type:
+                      description: Type of the db
+                      enum:
+                      - cassandra
+                      - kafka
+                      - elasticsearch
+                      - elasticsearch2
+                      - cockroachdb
+                      - clickhouse
+                      - zookeeper
+                      - aggregator
+                      type: string
+                  required:
+                  - namespace
+                  - schemas
+                  - serviceName
+                  - type
+                  type: object
+                minItems: 6
+                type: array
+              email:
+                description: Email configuration
+                properties:
+                  ses:
+                    description: SES configuration
+                    properties:
+                      from:
+                        description: from email address
+                        type: string
+                      region:
+                        description: AWS region to use
+                        type: string
+                      returnPath:
+                        description: Return path
+                        type: string
+                    required:
+                    - from
+                    - region
+                    - returnPath
+                    type: object
+                  smtp:
+                    description: SMTP configuration
+                    properties:
+                      from:
+                        description: from email address
+                        type: string
+                      host:
+                        description: host name of the mail server
+                        type: string
+                      port:
+                        description: port of the mail server
+                        type: integer
+                      startTLS:
+                        description: shall we start TLS? No by default
+                        type: boolean
+                      useSSL:
+                        description: shall we use SSL? No by default
+                        type: boolean
+                    required:
+                    - from
+                    - host
+                    - port
+                    type: object
+                type: object
+              enableNetworkPolicies:
+                default: false
+                description: If true, network policies are installed
+                type: boolean
+              feature:
+                description: Feature flag configurations
+                items:
+                  description: Feature flag configuration
+                  properties:
+                    enabled:
+                      description: Enabled sets the feature flag
+                      type: boolean
+                    key:
+                      description: Key of the feature flag
+                      type: string
+                  required:
+                  - enabled
+                  - key
+                  type: object
+                type: array
+              geoDbUrl:
+                description: Path to GeoLite2 db in S3 bucket
+                type: string
+              ingress:
+                description: Ingress configurations
+                items:
+                  description: IngressConfiguration is configuration for all kinds
+                    of ingresses
+                  properties:
+                    hostName:
+                      description: ingress host name
+                      type: string
+                    name:
+                      description: Ingress name
+                      type: string
+                    port:
+                      description: ingress port
+                      type: integer
+                  required:
+                  - name
+                  - port
+                  type: object
+                type: array
+              profile:
+                description: Pods profile size to use for core and global components,
+                  will default to "medium" if omitted
+                enum:
+                - small
+                - medium
+                - large
+                - xlarge
+                - xxlarge
+                type: string
+              profileOverwrites:
+                description: ProfileOverwrites for custom resource assignments (requests
+                  and limits for cpu and memory)
+                items:
+                  description: CoreOverwrite to adjust the standard profile per core
+                    component
+                  properties:
+                    component:
+                      description: Component to overwrite
+                      enum:
+                      - butler
+                      - groundskeeper
+                      - accountant
+                      - cashier-ingest
+                      - cashier-rollup
+                      - acceptor
+                      - eum-acceptor
+                      - eum-processor
+                      - eum-health-processor
+                      - appdata-health-processor
+                      - sli-evaluator
+                      - js-stack-trace-translator
+                      - appdata-writer
+                      - appdata-reader
+                      - serverless-acceptor
+                      - ingress-core
+                      type: string
+                    envvariables:
+                      description: Variables to be provide in the container environment
+                        of the component
+                      items:
+                        description: Overwrite for custom component resources
+                        properties:
+                          name:
+                            description: The name of the environment variable
+                            type: string
+                          value:
+                            description: The value of
+                            type: string
+                        required:
+                        - name
+                        type: object
+                      type: array
+                    overwrite:
+                      description: Overwrite the specified values
+                      properties:
+                        automountServiceAccountToken:
+                          description: AutomountServiceAccountToken  overwrites the
+                            service account name for automountServiceAccountToken
+                            definition
+                          type: boolean
+                        cpuLimit:
+                          description: CpuLimit sets the limited (not limited via
+                            your profile)
+                          type: string
+                        cpuRequest:
+                          description: CpuRequest overwrites the requested cpu
+                          type: string
+                        memoryLimit:
+                          description: MemoryLimit overwrites the limited memory
+                          type: string
+                        memoryRequest:
+                          description: MemoryRequest overwrites the requested memory
+                          type: string
+                        serviceAccountName:
+                          description: ServiceAccountName overwrites the service account
+                            name for pod definition
+                          type: string
+                      type: object
+                  required:
+                  - component
+                  type: object
+                type: array
+              proxy:
+                description: Proxy configuration
+                properties:
+                  host:
+                    description: proxy host
+                    type: string
+                  port:
+                    description: proxy port
+                    type: integer
+                required:
+                - host
+                - port
+                type: object
+              rawSpans:
+                description: RawSpans configuration
+                properties:
+                  persistentVolume:
+                    description: PersistentVolume configuration
+                    properties:
+                      requests:
+                        description: Requests for storage in Gi, default to 2 if omitted
+                        type: integer
+                      storageClass:
+                        description: StorageClass (high-io-storage)
+                        type: string
+                      volumeName:
+                        description: VolumeName for this mount
+                        type: string
+                    type: object
+                  s3:
+                    description: S3 access configuration
+                    properties:
+                      bucket:
+                        description: Bucket
+                        type: string
+                      bucketLongTerm:
+                        description: BucketLongTerm
+                        type: string
+                      endpoint:
+                        description: Endpoint
+                        type: string
+                      prefix:
+                        description: Prefix
+                        type: string
+                      prefixLongTerm:
+                        description: PrefixLongTerm
+                        type: string
+                      region:
+                        description: Region
+                        type: string
+                      storageClass:
+                        description: StorageClass
+                        type: string
+                      storageClassLongTerm:
+                        description: StorageClassLongTerm
+                        type: string
+                    required:
+                    - bucket
+                    - bucketLongTerm
+                    - endpoint
+                    - prefix
+                    - prefixLongTerm
+                    - region
+                    - storageClass
+                    - storageClassLongTerm
+                    type: object
+                type: object
+              registryURI:
+                default: containers.instana.io
+                description: Docker registry to use
+                type: string
+              saml:
+                description: SAML configuration
+                properties:
+                  baseURL:
+                    description: base URL, will default "/auth" if omitted
+                    pattern: ^\/*
+                    type: string
+                  enable:
+                    description: Enable if SAML should be used
+                    type: boolean
+                  maxAuthenticationLifetime:
+                    description: maximum authentication lifetime, will default to
+                      604800 if omitted
+                    type: integer
+                  maxIDPMetadataSizeInBytes:
+                    description: maximum IDP metadata size, will default to 200000
+                      if omitted
+                    type: integer
+                required:
+                - enable
+                type: object
+              serviceProvider:
+                properties:
+                  basePath:
+                    description: base URL, will default "/auth" if omitted
+                    pattern: ^\/*
+                    type: string
+                  maxAuthenticationLifetime:
+                    description: maximum authentication lifetime, will default to
+                      604800 if omitted
+                    type: integer
+                  maxIDPMetadataSizeInBytes:
+                    description: maximum IDP metadata size, will default to 200000
+                      if omitted
+                    type: integer
+                type: object
+              toggle:
+                description: Configuration toggles configuration
+                items:
+                  description: Toggle component configuration
+                  properties:
+                    key:
+                      description: Key of the toggle
+                      type: string
+                    value:
+                      description: Value for this toggle
+                      type: string
+                  required:
+                  - key
+                  - value
+                  type: object
+                type: array
+            required:
+            - baseDomain
+            - databaseLocations
+            - email
+            - rawSpans
+            type: object
+          status:
+            properties:
+              initialized:
+                description: Indicates whether the setup in Groundskeeper or Butler
+                  has been performed
+                type: boolean
+              lastUpdate:
+                description: The last status update time
+                format: date-time
+                type: string
+              status:
+                description: Current operator status
+                type: string
+              version:
+                description: Currently running Instana version
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.2
+  creationTimestamp: null
+  name: units.instana.io
+spec:
+  group: instana.io
+  names:
+    kind: Unit
+    listKind: UnitList
+    plural: units
+    singular: unit
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .status.status
+      name: Status
+      type: string
+    - jsonPath: .status.version
+      name: Version
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Unit is the Schema for the units API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: UnitSpec for instana unit installation
+            properties:
+              coreName:
+                description: Name of the core
+                type: string
+              coreNamespace:
+                description: Namespace where the core components reside
+                type: string
+              envvariables:
+                description: EnvVariables to be provide in the container environment
+                  of the component
+                items:
+                  description: Overwrite for custom component resources
+                  properties:
+                    name:
+                      description: The name of the environment variable
+                      type: string
+                    value:
+                      description: The value of
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
+              initialAgentKey:
+                description: Initial Agent key
+                minLength: 20
+                type: string
+              profile:
+                description: Pods profile size to use for unit components, will default
+                  to "medium" if omitted
+                enum:
+                - small
+                - medium
+                - large
+                - xlarge
+                - xxlarge
+                - xxxlarge
+                type: string
+              profileOverwrites:
+                description: ProfileOverwrites for custom resource assignments (requests
+                  and limits for cpu and memory)
+                items:
+                  description: UnitOverwrite to adjust the standard profile per unit
+                    component
+                  properties:
+                    component:
+                      description: Component to overwrite
+                      enum:
+                      - filler
+                      - processor
+                      - issue-tracker
+                      - appdata-processor
+                      - appdata-legacy-converter
+                      - ui-backend
+                      - ingress
+                      - ui-client
+                      type: string
+                    envvariables:
+                      description: Variables to be provide in the container environment
+                        of the component
+                      items:
+                        description: Overwrite for custom component resources
+                        properties:
+                          name:
+                            description: The name of the environment variable
+                            type: string
+                          value:
+                            description: The value of
+                            type: string
+                        required:
+                        - name
+                        type: object
+                      type: array
+                    overwrite:
+                      description: Overwrite the specified values
+                      properties:
+                        automountServiceAccountToken:
+                          description: AutomountServiceAccountToken  overwrites the
+                            service account name for automountServiceAccountToken
+                            definition
+                          type: boolean
+                        cpuLimit:
+                          description: CpuLimit sets the limited (not limited via
+                            your profile)
+                          type: string
+                        cpuRequest:
+                          description: CpuRequest overwrites the requested cpu
+                          type: string
+                        memoryLimit:
+                          description: MemoryLimit overwrites the limited memory
+                          type: string
+                        memoryRequest:
+                          description: MemoryRequest overwrites the requested memory
+                          type: string
+                        serviceAccountName:
+                          description: ServiceAccountName overwrites the service account
+                            name for pod definition
+                          type: string
+                      type: object
+                  required:
+                  - component
+                  - overwrite
+                  type: object
+                type: array
+              tenantName:
+                description: Name of the tenant
+                maxLength: 15
+                pattern: ^[a-z][a-z0-9]*$
+                type: string
+              unitName:
+                description: Name of the tenant unit
+                maxLength: 13
+                pattern: ^[a-z][a-z0-9]*$
+                type: string
+            required:
+            - coreName
+            - coreNamespace
+            - initialAgentKey
+            - tenantName
+            - unitName
+            type: object
+          status:
+            properties:
+              initialized:
+                description: Indicates whether the setup in Groundskeeper or Butler
+                  has been performed
+                type: boolean
+              lastUpdate:
+                description: The last status update time
+                format: date-time
+                type: string
+              status:
+                description: Current operator status
+                type: string
+              version:
+                description: Currently running Instana version
+                type: string
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

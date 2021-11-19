@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    application: instana
+    apps.kubernetes.io/name: instana-operator
+    group: operator
+  name: instana-operator
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    application: instana
+    apps.kubernetes.io/name: instana-core
+    group: operator
+  name: instana-core
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    application: instana
+    apps.kubernetes.io/name: instana-units
+    group: operator
+  name: instana-units

@@ -1,0 +1,72 @@
+apiVersion: instana.io/v1alpha1
+kind: Core
+metadata:
+  creationTimestamp: null
+  labels:
+    application: instana
+    group: operator
+  name: instana-core
+  namespace: instana-core
+spec:
+  baseDomain: instana.apps.bravos.cp.fyre.ibm.com
+  clusterDomain: cluster.local
+  databaseLocations:
+  - namespace: instana-core
+    schemas:
+    - spans
+    - metrics
+    - profiles
+    serviceName: cassandra
+    type: cassandra
+  - namespace: instana-core
+    schemas:
+    - butlerdb
+    - tenantdb
+    - sales
+    serviceName: cockroachdb
+    type: cockroachdb
+  - clusterName: local
+    clusterNodes:
+    - 9.112.255.99
+    isCluster: true
+    namespace: instana-core
+    schemas:
+    - application
+    serviceName: clickhouse
+    type: clickhouse
+  - clusterName: onprem_onprem
+    isCluster: true
+    namespace: instana-core
+    schemas:
+    - metadata_ng
+    serviceName: elasticsearch
+    type: elasticsearch
+  - namespace: instana-core
+    schemas:
+    - global-ingress
+    - ingress
+    serviceName: kafka
+    type: kafka
+  - namespace: instana-core
+    schemas:
+    - ingress
+    serviceName: zookeeper
+    type: zookeeper
+  email:
+    smtp:
+      from: <user_name>>
+      host: <smtp_host_name>
+      port: 465
+      useSSL: true
+  enableNetworkPolicies: false
+  ingress:
+  - hostName: agent.instana.apps.bravos.cp.fyre.ibm.com
+    name: agent-ingress
+    port: 443
+  profile: small
+  rawSpans:
+    persistentVolume:
+      storageClass: nfs-client
+  registryURI: containers.instana.io
+status:
+  lastUpdate: null
