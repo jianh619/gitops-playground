@@ -8,7 +8,7 @@ metadata:
   name: instana-core
   namespace: instana-core
 spec:
-  baseDomain: instana.apps.bravos.cp.fyre.ibm.com
+  baseDomain: in-kind-kind.fyre.ibm.com
   clusterDomain: cluster.local
   databaseLocations:
   - namespace: instana-core
@@ -60,7 +60,7 @@ spec:
       useSSL: true
   enableNetworkPolicies: false
   ingress:
-  - hostName: agent.instana.apps.bravos.cp.fyre.ibm.com
+  - hostName: agent.in-kind-kind.fyre.ibm.com
     name: agent-ingress
     port: 443
   profile: small
